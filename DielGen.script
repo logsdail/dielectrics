@@ -1,0 +1,134 @@
+#!/bin/bash
+
+echo "What percentage of Pd would you like:"
+read PDFRACTION
+echo "and so percentage of Au is:"
+read AUFRACTION
+
+#PDFRACTION=95
+#AUFRACTION=5
+
+#while [ $PDFRACTION -gt 90 ];
+#do
+	PdFrac=`echo $PDFRACTION/100 | bc -l`
+	AuFrac=`echo $AUFRACTION/100 | bc -l`
+
+        #echo PdFrac= $PdFrac
+        #echo AuFrac= $AuFrac
+
+	FileCounter=1
+	while [ $FileCounter -lt 27 ];
+	do
+		AUREAL=`awk 'FNR == 1' dielAu$FileCounter.tab | awk '{print $3}'`
+		PDREAL=`awk 'FNR == 1' dielPd$FileCounter.tab | awk '{print $3}'`
+
+		AUIMAG=`awk 'FNR == 1' dielAu$FileCounter.tab | awk '{print $5}'`
+		iPos=`expr length $AUIMAG`
+		AUIMAG=${AUIMAG:0:$(($iPos-1))}
+
+		PDIMAG=`awk 'FNR == 1' dielPd$FileCounter.tab | awk '{print $5}'`
+		iPos=`expr length $PDIMAG`
+		PDIMAG=${PDIMAG:0:$(($iPos-1))}		
+
+		#echo AuReal= $AUREAL
+		#echo PdReal= $PDREAL
+		
+		#echo AuImag= $AUIMAG
+		#echo PdImag= $PDIMAG
+
+		AuTemp=`echo $AUREAL*$AuFrac | bc -l`
+		PdTemp=`echo $PDREAL*$PdFrac | bc -l`
+		NewReal=`echo $AuTemp+$PdTemp | bc -l`
+		
+		AuTemp=`echo $AUIMAG*$AuFrac | bc -l`
+                PdTemp=`echo $PDIMAG*$PdFrac | bc -l`
+		NewImag=`echo $AuTemp+$PdTemp | bc -l`
+
+		#echo NewReal= $NewReal
+		#echo NewImag= $NewImag
+
+		Filename=dielPd${PDFRACTION}Au${AUFRACTION}-$FileCounter.tab
+
+		#echo $Filename
+
+		echo "m = $NewReal + ${NewImag}i" >> $Filename
+		echo `awk 'FNR == 2' dielAu$FileCounter.tab` >> $Filename
+		echo `awk 'FNR == 3' dielAu$FileCounter.tab` >> $Filename
+
+		echo "  `awk 'FNR == 4' dielAu$FileCounter.tab | awk '{print $1}'`  $NewReal      $NewImag" >> $Filename
+		echo "  `awk 'FNR == 5' dielAu$FileCounter.tab | awk '{print $1}'`  $NewReal      $NewImag" >> $Filename
+		echo "  `awk 'FNR == 6' dielAu$FileCounter.tab | awk '{print $1}'`  $NewReal      $NewImag" >> $Filename
+
+		((FileCounter=$FileCounter+1))
+	done
+	
+
+	#((AGFRACTION=AGFRACTION-5))
+	#((AUFRACTION=AUFRACTION+5))
+
+	#echo AGFRACTION= $AGFRACTION
+	#echo AUFRACTION= $AUFRACTION
+#done
+
+
+#------------------------------------------
+
+#AGFRACTION=100
+
+#AUFRACTION=0
+
+#let AGWEIGHT=$AGFRACTION/100
+#let AUWEIGHT=$AUFRACTION/100
+
+#echo $AGWEIGHT
+#echo $AUWEIGHT
+
+#INCREMENT=5
+
+#echo $INCREMENT
+
+#while [ $AUFRACTION -lt 100 ];
+
+#do
+
+#COUNTER=1
+
+#while [ $COUNTER -lt 2 ];
+
+#do
+
+#let AUREAL$COUNTER="$(sed -n "/[0-9]\.[0-9][0-9]/s/^.*\([0-9]\.[0-9][0-9][+, ]\).*$/\1/p;q" dielAu$COUNTER.tab)"
+#let AGREAL$COUNTER="$(sed -n "/[0-9]\.[0-9][0-9]/s/^.*\([0-9]\.[0-9][0-9][+, ]\).*$/\1/p;q" dielAg$COUNTER.tab)"
+
+#AUREAL=`awk 'FNR == 1' dielAu10.tab | awk '{print $3}'`
+#AGREAL=`awk 'FNR == 1' dielAu10.tab | awk '{print $3}'`
+
+#eval AGREAL$COUNTER=`sed -n "/[0-9]\.[0-9][0-9]/s/^.*\([0-9]\.[0-9][0-9][+, ]\).*$/\1/p;q" dielAg$COUNTER.tab` 
+#export AGREAL$COUNTER
+
+#eval AUREAL$COUNTER=`sed -n "/[0-9].[0-9][0-9]/s/^.*\([0-9].[0-9][0-9][+, ]\).*$/\1/p;q" dielAu$COUNTER.tab`
+#export AUREAL$COUNTER
+
+#echo $AGREAL
+#echo $AUREAL
+
+#let WREAL$COUNTER=$AGWEIGHT*$AGREAL+$AUWEIGHT*$AUREAL
+
+#sed -n 1p dielAg$COUNTER.tab>dielAg"$AGFRACTION"Au"$AUFRACTION"w"$COUNTER".tab
+#sed -n 1p dielAu$COUNTER.tab>>dielAg"$AGFRACTION"Au"$AUFRACTION"w"$COUNTER".tab
+
+#((COUNTER=COUNTER+1))
+#echo $AUREAL$COUNTER
+#echo $AGREAL$COUNTER
+#echo $WREAL$COUNTER
+
+#echo Wavelength
+#echo $COUNTER
+
+#done
+
+#((AGFRACTION=AGFRACTION-INCREMENT))
+#((AUFRACTION=AUFRACTION+INCREMENT))
+
+
+#done

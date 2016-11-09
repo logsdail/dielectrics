@@ -1,0 +1,24 @@
+#!
+
+counter=1
+
+echo "Enter element:"
+read element
+echo "Enter number of points:"
+read limit
+
+((limit=$limit+1))
+
+while [ ${counter} -lt ${limit} ]; 
+ do
+
+ k=`sed -n ${counter}p k.file`
+ n=`sed -n ${counter}p n.file`
+
+ filename=diel${element}${counter}.tab
+ sed -e "s/k1/"${k}"/" -e "s/n1/"${n}"/" dielTEMP.tab > $filename
+ echo ${filename}
+ ((counter=${counter}+1))
+ done
+echo " "
+echo "DONE"

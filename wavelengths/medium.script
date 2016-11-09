@@ -1,0 +1,14 @@
+#!
+
+filename=$1
+divide=$2
+lines=`wc -l ${filename}  | awk '{print $1}'`
+((lines=$lines+1))
+counter=1
+
+while [ ${counter} -lt ${lines} ]
+do
+	line=`awk 'FNR == '"${counter}" ${filename}`
+	echo `scale=8; echo "${line} / ${divide}" | bc -l` 
+	((counter=$counter+1))
+done

@@ -1,0 +1,33 @@
+#!
+
+counter=0
+count=1
+
+echo "Enter element:"
+read element
+echo "Enter number of points:"
+read limit
+
+while [ ${counter} -lt ${limit} ]; 
+ do
+
+ k=`sed -n ${limit}p k.file`
+ n=`sed -n ${limit}p n.file`
+
+ filename=diel${element}${count}.tab
+ 
+cat << EOF > ${filename}
+m = ${n} + ${k}i 
+1 2 3 0 0 = columns for wave, Re(N), Im(N), eps1, eps2
+   LAMBDA     Re(N)     Im(N)
+  0.000001  ${n}       ${k}
+  1.000000  ${n}       ${k}
+  100000.0  ${n}       ${k}
+EOF
+
+ echo ${filename}
+ ((limit=${limit}-1))
+ ((count=${count}+1))
+ done
+echo " "
+echo "DONE"

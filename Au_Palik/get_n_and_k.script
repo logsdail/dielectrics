@@ -1,0 +1,10 @@
+#!
+
+files=`ls diel*`
+
+for file in ${files}
+	do
+		n=`awk NR==1 ${file} | awk '{print $3}'`
+		k=`awk NR==1 ${file} | awk '{print $5}'`
+		echo ${file} ${n} ${k:0:5} 
+	done

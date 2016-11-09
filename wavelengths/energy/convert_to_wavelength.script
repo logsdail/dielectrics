@@ -1,0 +1,15 @@
+#!
+
+filename=$1
+lines=`wc -l ${filename}  | awk '{print $1}'`
+((lines=$lines+1))
+counter=1
+
+touch converted
+
+while [ ${counter} -lt ${lines} ]
+do
+	line=`awk 'FNR == '"${counter}" ${filename}`
+	echo `echo "1240 / ${line}" | bc -l` >> converted
+	((counter=$counter+1))
+done

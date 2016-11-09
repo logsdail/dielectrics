@@ -1,0 +1,36 @@
+#!
+#
+
+counter=1
+element=${1}
+nfile=${2}
+kfile=${3}
+limit=`wc -l ${nfile} | awk '{ print $1 }'`
+
+((limit=$limit+1))
+
+while [ ${counter} -lt ${limit} ]; 
+ do
+
+ k=`sed -n ${counter}p ${kfile} | awk '{ print $2 }'`
+ n=`sed -n ${counter}p ${nfile} | awk '{ print $2 }'`
+
+ filename=diel${element}${counter}.tab
+ 
+cat << EOF > ${filename}
+m = ${n} + ${k}i 
+1 2 3 0 0 = columns for wave, Re(N), Im(N), eps1, eps2
+   LAMBDA     Re(N)     Im(N)
+  0.000001  ${n}       ${k}
+  1.000000  ${n}       ${k}
+  100000.0  ${n}       ${k}
+EOF
+
+ echo ${filename}
+
+ sed -n ${counter}p ${nfile} | awk '{ print $1 }' >> wavelengths
+
+ ((counter=${counter}+1))
+ done
+echo " "
+echo "DONE"

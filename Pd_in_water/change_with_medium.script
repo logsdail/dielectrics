@@ -1,0 +1,34 @@
+#!
+
+echo "Element type..."
+read ELEMENT
+echo "What are we dividing everything by?"
+read FRACTION
+
+	FileCounter=1
+	while [ $FileCounter -lt 27 ];
+	do
+		REAL=`awk 'FNR == 1' diel${ELEMENT}${FileCounter}.tab | awk '{print $3}'`
+
+		IMAG=`awk 'FNR == 1' diel${ELEMENT}${FileCounter}.tab | awk '{print $5}'`
+		iPos=`expr length $IMAG`
+		IMAG=${IMAG:0:$(($iPos-1))}
+
+		NewReal=`echo ${REAL}/${FRACTION} | bc -l`
+		
+		NewImag=`echo ${IMAG}/${FRACTION} | bc -l`
+
+		Filename=diel${ELEMENT}${FileCounter}-water.tab
+
+		echo "m = ${NewReal} + ${NewImag}i" >> ${Filename}
+		echo `awk 'FNR == 2' diel${ELEMENT}${FileCounter}.tab` >> ${Filename}
+		echo `awk 'FNR == 3' diel${ELEMENT}${FileCounter}.tab` >> ${Filename}
+
+		echo "  `awk 'FNR == 4' diel${ELEMENT}${FileCounter}.tab | awk '{print $1}'`  $NewReal      $NewImag" >> $Filename
+		echo "  `awk 'FNR == 5' diel${ELEMENT}${FileCounter}.tab | awk '{print $1}'`  $NewReal      $NewImag" >> $Filename
+		echo "  `awk 'FNR == 6' diel${ELEMENT}${FileCounter}.tab | awk '{print $1}'`  $NewReal      $NewImag" >> $Filename
+
+		mv ${Filename} diel${ELEMENT}${FileCounter}.tab
+
+		((FileCounter=$FileCounter+1))
+	done
